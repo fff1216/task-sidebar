@@ -1,89 +1,52 @@
-(function () {
-    var Menubar = function () {
-        this.el = document.querySelector('#sidebar ul');
-        this.state = 'allClosed';
-        this.el.addEventListener('click', function (e) {
-            e.stopPropagation();
-        });
-        var self = this;
-        this.currentOpenMenuContent = null;
-        this.menuList = document.querySelectorAll('#sidebar ul > li');
-        for (var i = 0; i < this.menuList.length; i++) {
-            this.menuList[i].addEventListener('click', function (e) {
-                var menuContentEl = document.getElementById(e.currentTarget.id + '-content');
-                // console.log(menuContentEl);
-                if (self.state === 'allClosed') {
-                    console.log('打开' + menuContentEl.id);
-                    menuContentEl.style.top='0';
-                    menuContentEl.style.left='-85px';
-                    menuContentEl.className='nav-content';
-                    menuContentEl.classList.add('menuContent-move-right');
-                    self.state = 'hasOpened';
-                    self.currentOpenMenuContent = menuContentEl;
-                } else {
-                    console.log("关闭"+self.currentOpenMenuContent.id);
-                    self.currentOpenMenuContent.currentOpenMenuContent='nav-content';
-                    self.currentOpenMenuContent.style.top='0';
-                    self.currentOpenMenuContent.style.left='35px';
-                    self.currentOpenMenuContent.classList.add('menuContent-move-left');
-                    console.log('打开' + menuContentEl.id);
-                    menuContentEl.className='nav-content';
-                    menuContentEl.style.top='250px';
-                    menuContentEl.style.left='35px';
-                    menuContentEl.classList.add('menuContent-move-up');
-                    self.state='hasOpened';
-                    self.currentOpenMenuContent=menuContentEl;
-                }
-            });
-        }
-        this.menuContentList=document.querySelectorAll('.nav-content > div.nav-con-close');
-        for(i=0;i<this.menuContentList.length;i++){
-            this.menuContentList[i].addEventListener('click',function(e){
-                var menuContent=e.currentTarget.parentNode;
-                menuContent.className='nav-content';
-                menuContent.style.top='0';
-                menuContent.style.left='35px';
-                menuContent.classList.add('menuContent-move-left');
-                this.state='allClosed';
-            
-            });
-        }
-    };
-    var Sidebar = function (eId, closeBar) {
-        this.state = 'opened';
-        this.el = document.getElementById(eId || 'sidebar');
-        this.closeBarEl = document.getElementById(closeBar || 'closeBar');
-        var self = this;
-        this.memubar = new Menubar();
-        this.el.addEventListener('click', function (event) {
-            if (event.target !== self.el) {
-                self.triggerSwitch();
-            }
-        });
-
-    };
-    Sidebar.prototype.close = function () {
-        console.log("close");
-        this.el.className='sidebar-move-left';
-        this.closeBarEl.className='move-right';
-        this.state = 'close';
-    };
-    Sidebar.prototype.open = function () {
-        console.log("open");
-        this.el.style.left='-120px';
-        this.el.className='sidebar-move-right';
-        this.closeBarEl.style.left='160px';
-        this.closeBarEl.className='move-left';
-        this.state = 'opened';
-    };
-    Sidebar.prototype.triggerSwitch = function () {
-        if (this.state === 'opened') {
-            this.close();
+$(function () {
+    $(".item").on("mouseover", function () {
+        $(this).css("background-color", "#4d555d");
+        $(this).find(".material-icons").css("color", "#f01400");
+        $(this).find(".item-tip").css("left", "38px");
+    });
+    $(".item").on("mouseout", function () {
+        $(this).css("background-color", "#1d1d21");
+        $(this).find(".material-icons").css("color", "#808792");
+        $(this).find(".item-tip").css("left", "-50px");
+    });
+    var constate = "allclosed";
+    var openContent = null;
+    $(".item").on("click", function () {
+        var currentId = $(this).attr('id');
+        var name = currentId + "-content";
+        if (constate === "allclosed") {
+            $("#" + name).css("left", "40px");
+            constate = "opened";
+            openContent = name;
         }
         else {
-            this.open();
+            $("#" + openContent).css("left", "-200px");
+            $("#" + name).css("left", "40px");
+            constate = "opened";
+            openContent = name;
         }
-    };
-    var sidebar = new Sidebar();
-
-})();
+    });
+    $(".nav-content .material-icons").on("click", function () {
+        $(this).parent().parent().css("left", "-200px");
+    });
+    var barState = "opened";
+    $("#closeBar").on("click", function () {
+        if (barState === "opened") {
+            $(this).css("left", "100px");
+            $(this).find(".material-icons").css("color", "#42a5f5");
+            $(this).find(".material-icons").css("font-size", "40px");
+            $(this).parent().css("left","-40px");
+            if(constate = "opened") {
+                $(".nav-content").css("left","-200px");
+            }
+            barState="closed";
+        }
+        else{
+            $(this).css("left", "5px");
+            $(this).parent().css("left","0px");
+            $(this).find(".material-icons").css("color", "#f01400");
+            $(this).find(".material-icons").css("font-size", "28px");
+            barState = "opened";
+        }
+    });
+});
